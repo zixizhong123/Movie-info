@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Actor/Roles/Movies</title>
+<style>
+table {
+  border: 2px solid gray;
+  text-align: left;
+  margin: 10px;
+}
+
+ tr:nth-child(odd) 
+ { background: lightgray } 
+
+</style>
+
+</head>
+<body>
+<h3>Search for actors,roles, movies in the imdb_small</h3>
+Search string<br>
+<input type="text" id="inputText"><br><br>
+<input type="submit" value="Actors" onclick="getInfo(this)">
+<input type="submit" value="Movies" onclick="getInfo(this)">
+<input type="submit" value="Roles" onclick="getInfo(this)">
+
+<div id="divToChange"></div>
+<script>
+function getInfo(t){
+	var tableName = t.value;
+	var substring =document.getElementById('inputText').value.trim();
+	var ajax = new XMLHttpRequest();
+	
+	ajax.open("GET","controller.php?tableName="+tableName
+							+"&substring="+substring);
+	ajax.send();
+	
+	ajax.onreadystatechange = function(){
+		if(ajax.readyState ==4 && ajax.status ==200){
+		array = JSON.parse(ajax.responseText);
+		str = "<h3>"+tableName+"</h3>"+"<table class= 'odd'>";
+		for (var i = 0; i < array.length; i++) {
+			str += "<tr>";
+			if (tableName == 'Actors'){
+				str += "<td>" + array[i]['first_name']+' ' 
+				+array[i]['last_name']+ "</td>";
+			}else if (tableName == 'Movies'){
+				str += "<td>" + array[i]['name'] + "</td>";
+			}
+			else if (tableName == 'Roles'){
+				str += "<td>" + array[i]['role'] + "</td>";
+			}
+			str += "</tr>";
+			}
+			str += "</table>";
+		document.getElementById("divToChange").innerHTML = str;
+		}
+	};
+	
+
+}
+</script>
+
+</body>
+</html>
